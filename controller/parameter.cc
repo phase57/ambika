@@ -865,6 +865,20 @@ static const prog_Parameter parameters[kNumParameters] PROGMEM = {
     UNIT_BOOLEAN, 0, 1,
     1, 0, 0xff, 0xff,
     STR_RES_SWAP_COLORS, STR_RES_SWAP_COLORS, STR_RES_SYSTEM },
+	
+  // 73
+  { PARAMETER_LEVEL_PATCH,
+    PRM_PATCH_FILTER1_VELO,
+    UNIT_UINT8, 0, 63,
+    1, 0, 0xff, 108,
+    STR_RES_VELOTVCF, STR_RES_VELOTVCF, STR_RES_FILTER_1 },
+	
+  // 74
+  { PARAMETER_LEVEL_PATCH,
+    PRM_PATCH_FILTER1_KBT,
+    UNIT_INT8, -63, 63,
+    1, 0, 0xff, 109,
+    STR_RES_KBTTVCF, STR_RES_KBTTVCF, STR_RES_FILTER_1 },
 };
 
 /* static */
