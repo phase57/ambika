@@ -98,9 +98,15 @@ uint8_t Library::OnIncrement(int8_t increment) {
     if (active_control_ == 0) {
       int8_t bank = location_.bank;
       location_.bank = Clip(bank + increment, 0, 25);
+	  if (storage.LoadName(location_) != FS_OK) {
+		memcpy_P(name_, blank_patch_name, sizeof(name_));
+	  }
     } else if (active_control_ == 1){
       int16_t slot = location_.slot;
       location_.slot = Clip(location_.slot + increment, 0, 127);
+	  if (storage.LoadName(location_) != FS_OK) {
+		memcpy_P(name_, blank_patch_name, sizeof(name_));
+	  }
     } else {
       char character = name_[active_control_ - 2];
       character = Clip(character + increment, 32, 127);
@@ -250,6 +256,9 @@ uint8_t Library::OnKeyBrowse(uint8_t key) {
 /* static */
 uint8_t Library::OnKeySave(uint8_t key) {
   switch (key) {
+    case 3: //clear name
+	  memset(name_, ' ', sizeof(name_) - 1);
+	  break;
     case 6:
       {
         if (storage.Save(location_) == FS_OK) {
@@ -322,7 +331,7 @@ void Library::UpdateScreen() {
     buffer[34] = kDelimiter;
   } else {
     buffer = display.line_buffer(1) + 1;
-    strncpy_P(&buffer[28], PSTR("save|cancel"), 11);
+    strncpy_P(&buffer[15], PSTR("clear        save|cancel"), 24);
     buffer[32] = kDelimiter;
   }
   
@@ -352,6 +361,8 @@ void Library::UpdateLeds() {
       leds.set_pixel(LED_1 + i, 0x0f);
     }
   }
+  if (action_ == LIBRARY_ACTION_SAVE)
+	leds.set_pixel(LED_4, 0x0f);
 }
 
 /* static */
