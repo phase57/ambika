@@ -62,6 +62,7 @@ uint16_t Library::loaded_objects_indices_[kNumVoices * 3 + 1] = {
   0,
 };
 uint8_t Library::name_dirty_ = 0;
+bool SetFirstChar = false;
 /* </static> */
 
 
@@ -109,11 +110,15 @@ uint8_t Library::OnIncrement(int8_t increment) {
 	  }
     } else {
       char character = name_[active_control_ - 2];
+	  if (SetFirstChar && character == 32) { 
+		character = 'a'-1; }
       character = Clip(character + increment, 32, 127);
       name_[active_control_ - 2] = character;
-    }
+	  SetFirstChar = false;
+	}
   }
   if (action_ == LIBRARY_ACTION_SAVE && edit_mode_ == EDIT_IDLE) {
+	SetFirstChar = true;
     int8_t control = active_control_;
     control = Clip(control + increment, 0, 16);
     active_control_ = control;
@@ -204,6 +209,7 @@ uint8_t Library::OnKeyBrowse(uint8_t key) {
           // and clear the patch name area.
           if (!memcmp_P(name_, blank_patch_name, sizeof(name_) - 1)) {
             memset(name_, ' ', sizeof(name_) - 1);
+			SetFirstChar = true;
           }
         }
         break;
@@ -257,8 +263,12 @@ uint8_t Library::OnKeyBrowse(uint8_t key) {
 uint8_t Library::OnKeySave(uint8_t key) {
   switch (key) {
     case 3: //clear name
-	  memset(name_, ' ', sizeof(name_) - 1);
+	  {
+		memset(name_, ' ', sizeof(name_) - 1);
+		SetFirstChar = true;
+	  }
 	  break;
+	  
     case 6:
       {
         if (storage.Save(location_) == FS_OK) {
