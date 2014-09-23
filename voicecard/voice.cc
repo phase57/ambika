@@ -320,10 +320,10 @@ inline void Voice::UpdateDestinations() {
       modulation_sources_[MOD_SRC_LFO_2] + 128));
   
   // added velocity to cutoff & keyboard tracking to cutoff 
-  cutoff = S16ClipU14(cutoff + S8U8Mul(patch_.filter_velo, // velocity to filter freq
-      modulation_sources_[MOD_SRC_VELOCITY]));
-  cutoff = S16ClipU14(cutoff + S8U8Mul(patch_.filter_kbt,  // keyb tracking (note) to filter freq
-      modulation_sources_[MOD_SRC_NOTE]));
+  cutoff = S16ClipU14(cutoff + S8U8Mul(patch_.filter_velo, 
+      modulation_sources_[MOD_SRC_VELOCITY])); // velocity to filter freq
+  cutoff = S16ClipU14(cutoff + S8S8Mul(patch_.filter_kbt,  
+      modulation_sources_[MOD_SRC_NOTE] + 128)); // keyb tracking (note) to filter freq
   
   // Store in memory all the updated parameters.
   modulation_destinations_[MOD_DST_FILTER_CUTOFF] = U14ShiftRight6(cutoff);
